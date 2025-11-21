@@ -33,7 +33,7 @@ This project is a complete backend system for:
 ## 📁 Project Structure
 
 ```
-BackendPython/
+Backend/
 │── main.py
 │
 ├── routers/
@@ -56,7 +56,7 @@ BackendPython/
 │   ├── db.py
 │   └── __init__.py
 │
-└── venv/
+└── requirements.txt
 ```
 
 ---
@@ -91,7 +91,7 @@ pip install fastapi uvicorn psycopg2-binary pgvector numpy PyPDF2 python-multipa
 Because your path is:
 
 ```
-cd BackendPython
+cd Backend
 ```
 
 Run:
