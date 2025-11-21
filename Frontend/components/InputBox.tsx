@@ -46,7 +46,7 @@ export default function InputBox({
       formData.append("file", selectedFile);
 
       try {
-        await axios.post(`${BACKEND_URL}/pdf/upload`, formData, {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/pdf/upload`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
