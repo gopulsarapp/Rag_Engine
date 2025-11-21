@@ -13,8 +13,6 @@ interface QAItem {
 
 export default function Home() {
   const [data, setData] = useState<QAItem[]>([]);
-  console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
-
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [searchData, setSearchData] = useState(false);
   const [btn, setBtn] = useState(false);
@@ -33,10 +31,9 @@ export default function Home() {
         ...prev,
         {
           question: ask,
-          answer: response.data.answer || "No response was returned."
-        }
+          answer: response.data.answer || "No response was returned.",
+        },
       ]);
-
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -47,17 +44,14 @@ export default function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-zinc-50 font-sans dark:bg-black mt-[65px]">
+    <div className="flex items-center justify-center bg-zinc-50 dark:bg-black mt-[65px]">
       <ContentPage
         data={data}
         searchData={searchData}
         currentQuestion={currentQuestion}
       />
 
-      <InputBox
-        sendQuery={sendQuery}
-        btn={btn}
-      />
+      <InputBox sendQuery={sendQuery} btn={btn} />
     </div>
   );
 }
