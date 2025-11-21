@@ -1,60 +1,57 @@
-export async function GET(req) {
-  const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
+"use client";
 
-  let path = req.nextUrl.pathname.replace("/api/proxy", "");
-  if (!path.startsWith("/")) path = "/" + path;   // FIX PATH
+import { useState } from "react";
+import ContentPage from "@/components/ContentPage";
+import InputBox from "@/components/InputBox";
+import axios from "axios";
+import { toast } from "sonner";
 
-  const target = backend + path;
-
-  try {
-    const response = await fetch(target, {
-      method: "GET",
-    });
-
-    const data = await response.text();
-    return new Response(data, { status: response.status });
-
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Proxy GET failed" }), {
-      status: 500,
-    });
-  }
+interface QAItem {
+  question: string;
+  answer: string;
 }
 
-export async function POST(req) {
-  const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
+export default function Home() {
+  const [data, setData] = useState<QAItem[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [searchData, setSearchData] = useState(false);
+  const [btn, setBtn] = useState(false);
 
-  let path = req.nextUrl.pathname.replace("/api/proxy", "");
-  if (!path.startsWith("/")) path = "/" + path;   // FIX PATH
+  const sendQuery = async (ask: string) => {
+    setCurrentQuestion(ask);
+    setSearchData(true);
+    setBtn(true);
 
-  const target = backend + path;
+    try {
+      const response = await axios.post(`/api/proxy/query/ask`, {
+        question: ask,
+      });
 
-  try {
-    const contentType = req.headers.get("content-type") || "";
-    let body;
-
-    if (contentType.includes("multipart/form-data")) {
-      // file upload
-      body = await req.formData();
-    } else {
-      // JSON request
-      body = await req.text();
+      setData((prev) => [
+        ...prev,
+        {
+          question: ask,
+          answer: response.data.answer || "No response was returned.",
+        },
+      ]);
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setCurrentQuestion("");
+      setSearchData(false);
+      setBtn(false);
     }
+  };
 
-    const response = await fetch(target, {
-      method: "POST",
-      body,
-      headers: {
-        "content-type": contentType  // FIX MULTIPART FORWARDING
-      },
-    });
+  return (
+    <div className="flex items-center justify-center bg-zinc-50 dark:bg-black mt-[65px]">
+      <ContentPage
+        data={data}
+        searchData={searchData}
+        currentQuestion={currentQuestion}
+      />
 
-    const text = await response.text();
-    return new Response(text, { status: response.status });
-
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Proxy POST failed" }), {
-      status: 500,
-    });
-  }
+      <InputBox sendQuery={sendQuery} btn={btn} />
+    </div>
+  );
 }
