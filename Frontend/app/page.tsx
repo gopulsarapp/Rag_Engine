@@ -13,6 +13,7 @@ interface QAItem {
 
 export default function Home() {
   const [data, setData] = useState<QAItem[]>([]);
+  console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
 
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [searchData, setSearchData] = useState(false);
