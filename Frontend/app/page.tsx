@@ -25,10 +25,9 @@ export default function Home() {
     setBtn(true);
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/query/ask`,
-        { question: ask }
-      );
+      const response = await axios.post(`/api/proxy/query/ask`, {
+        question: ask,
+      });
 
       setData((prev) => [
         ...prev,
