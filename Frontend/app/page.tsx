@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ContentPage from "@/components/ContentPage";
 import InputBox from "@/components/InputBox";
 import axios from "axios";
@@ -15,6 +15,7 @@ export default function Home() {
   const [data, setData] = useState<QAItem[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [searchData, setSearchData] = useState(false);
+  const [SelelctPdfName, setSelelctPdfName] = useState('');
   const [btn, setBtn] = useState(false);
 
   const sendQuery = async (ask: string) => {
@@ -23,8 +24,10 @@ export default function Home() {
     setBtn(true);
 
     try {
+
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/query/ask`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/query/ask${SelelctPdfName ? `?pdf=${SelelctPdfName}` : ""
+        }`,
         { question: ask }
       );
 
@@ -44,6 +47,11 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    console.log(SelelctPdfName);
+  }, [SelelctPdfName]);
+
+
   return (
     <div className="flex items-center justify-center bg-zinc-50 dark:bg-black mt-[65px]">
       <ContentPage
@@ -52,7 +60,11 @@ export default function Home() {
         currentQuestion={currentQuestion}
       />
 
-      <InputBox sendQuery={sendQuery} btn={btn} />
+      <InputBox
+        sendQuery={sendQuery}
+        btn={btn}
+        setSelelctPdfName={setSelelctPdfName}
+      />
     </div>
   );
 }

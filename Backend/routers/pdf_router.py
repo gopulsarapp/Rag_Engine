@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File
-from controllers.pdf_controller import process_pdf_upload
+from controllers.pdf_controller import process_pdf_upload, select_All_Pdf
 
 router = APIRouter(prefix="/pdf", tags=["PDF Upload"])
 
@@ -11,3 +11,8 @@ async def upload_pdf(file: UploadFile = File(...)):
     """
     result = await process_pdf_upload(file)
     return result
+
+@router.get("/getAllPdf")
+async def get_all_pdf():
+    allpdffilename = select_All_Pdf()  # no await
+    return {"message": "success", "data": allpdffilename}

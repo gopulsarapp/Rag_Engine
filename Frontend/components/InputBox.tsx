@@ -5,6 +5,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Paperclip, Send, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -16,14 +25,37 @@ type FileItem = {
 export default function InputBox({
   sendQuery,
   btn,
+  setSelelctPdfName
 }: {
   sendQuery: (q: string) => void;
   btn: boolean;
+  setSelelctPdfName: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<FileItem[]>([]);
   const [focused, setFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [option, setOption] = useState<string[]>([]);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/pdf/getAllPdf`
+        );
+
+        setOption(res.data.data);
+
+        toast.success("PDF list loaded");
+      } catch (error) {
+        toast.error("Failed to load PDFs");
+      }
+    };
+
+    fetchData();  // <-- you forgot this
+  }, []);
+
 
   // ---------------------------
   // FILE UPLOAD (multipart-safe)
@@ -106,9 +138,38 @@ export default function InputBox({
       className="fixed bottom-0 left-0 right-0 w-full p-4 border-t bg-background"
     >
       <div className="w-full max-w-full lg:max-w-xl mx-auto flex flex-col gap-4">
-        <p className="text-sm font-medium text-muted-foreground">
-          Enter your chat message
-        </p>
+
+        <div className="flex items-center justify-between">
+
+          <p className="text-sm font-medium text-muted-foreground">
+            Enter your chat message
+          </p>
+
+          <Select
+            onValueChange={(value) => {
+              setSelelctPdfName(value)
+            }}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Select Pdf" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Select Pdf</SelectLabel>
+                {option.map((pdf, index) => (
+                  <SelectItem key={index} value={pdf}>
+                    {pdf}
+                  </SelectItem>
+                ))}
+
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+        </div>
+
+
 
         <motion.div animate={{ scale: focused ? 1.02 : 1 }}>
           <Textarea
