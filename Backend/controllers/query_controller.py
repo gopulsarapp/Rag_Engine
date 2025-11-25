@@ -9,6 +9,7 @@ import google.generativeai as genai
 load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
+MODEL_NAME = os.getenv("GENAI_MODEL", "models/gemini-2.5-pro")
 
 if not API_KEY:
     raise ValueError("Missing GEMINI_API_KEY in environment")
@@ -16,7 +17,7 @@ if not API_KEY:
 genai.configure(api_key=API_KEY)
 
 
-model = genai.GenerativeModel("models/gemini-2.5-pro")
+model = genai.GenerativeModel(MODEL_NAME)
 
 
 def find_most_similar_chunk(query: str, k: int = 3):

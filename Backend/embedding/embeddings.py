@@ -5,6 +5,7 @@ import google.generativeai as genai
 load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
+EMBED_MODEL_NAME = os.getenv("GENAI_EMBED_MODEL", "models/text-embedding-004")
 
 if not API_KEY:
     raise ValueError("Missing GEMINI_API_KEY in environment")
@@ -18,7 +19,7 @@ def embed_text(text: str):
     """
     try:
         response = genai.embed_content(
-            model="models/text-embedding-004",
+            model=EMBED_MODEL_NAME,
             content=text
         )
         return response["embedding"]
